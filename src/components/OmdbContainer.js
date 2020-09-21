@@ -44,17 +44,17 @@ class OmdbContainer extends Component {
         <Row>
           <Col size="md-8">
             <Card
-              heading={this.state.result.Title || "Search for a Movie to Begin"}
-            >(
+              heading={this.state.result.Title || "Employee Directory"}
+            >
               {this.state.result.length ? 
                 this.state.result
                   .filter(item => 
                     `${item.name.first.toLowerCase()} ${item.name.last.toLowerCase() }`.includes(this.state.search.toLowerCase())
                   )
                   .map(item => (
-                    <li className="list-group-item" key={item.id.value}>
-                      {item.name.first} {item.name.last}
-                    </li>
+                    <div className="list-group-item justify-content-between" key={item.id.value}>
+                     {item.name.first}  {item.name.last}        {item.phone}     {item.email}
+                    </div>
                   )
                   ) : (
                     <h3>No Results to Display</h3>
