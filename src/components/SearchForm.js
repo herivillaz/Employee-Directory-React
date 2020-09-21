@@ -13,9 +13,12 @@ function SearchForm(props) {
           className="form-control"
           placeholder="Search For an Employee"
           id="search"
+          
         />
         <br />
+        
       </div>
+      <button type="button" class="btn btn-light sort">Sort/Organize</button>
     </form>
   );
 }
