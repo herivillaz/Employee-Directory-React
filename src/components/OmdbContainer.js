@@ -7,9 +7,38 @@ import SearchForm from "./SearchForm";
 import MovieDetail from "./MovieDetail";
 import API from "../utils/API";
 
+const compareFunctionDESC = function (a, b) {
+  var nameA = a.name.first.toUpperCase(); // ignore upper and lowercase
+  var nameB = b.name.first.toUpperCase(); // ignore upper and lowercase
+  if (nameA < nameB) {
+    return -1;
+  }
+  if (nameA > nameB) {
+    return 1;
+  }
+
+  // names must be equal
+  return 0;
+};
+const compareFunctionASC = function (a, b) {
+  var nameA = a.name.first.toUpperCase(); // ignore upper and lowercase
+  var nameB = b.name.first.toUpperCase(); // ignore upper and lowercase
+  if (nameA < nameB) {
+    return 1;
+  }
+  if (nameA > nameB) {
+    return -1;
+  }
+
+  // names must be equal
+  return 0;
+};
+
 class OmdbContainer extends Component {
   state = {
-    result: {},
+    sortedresult: [],
+    storeorder: "ASC",
+    result: [],
     search: ""
   };
 
@@ -18,7 +47,7 @@ class OmdbContainer extends Component {
     API.search()
       .then(res => {
         console.log(res);
-        this.setState({ result: res.data.results }, () => console.log(this.state))
+        this.setState({ result: res.data.results, sortedresult: res.data.results }, () => console.log(this.state))
       })
       .catch(err => console.log(err));
   }
@@ -32,55 +61,77 @@ class OmdbContainer extends Component {
     }, () => console.log(this.state));
   };
 
-  // const directory = state.result;
-  // directory.click(() => {
-  //   directory.sort();
-  //   console.log(directory);
-  // });
-    
+  sortEmployees = (event) => {
+    event.preventDefault();
+    const directory = this.state.result;
+    let order = this.state.storeorder;
+    directory.sort(order === 'ASC' ? compareFunctionASC : compareFunctionDESC);
+    if (order === 'ASC') {
+      order = 'DESC';
+    }
+    else {
+      order = 'ASC';
+    }
+    this.setState({ sortedresult: directory, storeorder: order });
+
+  }
   
 
-// When the form is submitted, search the OMDB API for the value of `this.state.search`
-// handleFormSubmit = event => {
-//   event.preventDefault();
-//   this.searchMovies(this.state.search);
-// };
+  render() {
+    return (
+      <Container>
+        <Row>
+          <Col size="md-8">
+            <Card
+              heading={this.state.result.Title || "Employee Directory"}
+            >
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">First</th>
+                    <th scope="col">Last</th>
+                    <th scope="col">Phone #</th>
+                    <th scope="col">Email</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {this.state.sortedresult.length ?
+                    this.state.sortedresult
+                      .filter(item =>
+                        `${item.name.first.toLowerCase()} ${item.name.last.toLowerCase()}`.includes(this.state.search.toLowerCase())
+                      )
+                      .map((item, i) => (
+                        <tr key={item.id.value}>
+                          <th scope="row">{i}</th>
+                          <td>{item.name.first}</td>
+                          <td>{item.name.last}</td>
+                          <td>{item.phone}</td>
+                          <td>{item.email}</td>
+                        </tr>
 
-render() {
-  return (
-    <Container>
-      <Row>
-        <Col size="md-8">
-          <Card
-            heading={this.state.result.Title || "Employee Directory"}
-          >
-            {this.state.result.length ?
-              this.state.result
-                .filter(item =>
-                  `${item.name.first.toLowerCase()} ${item.name.last.toLowerCase()}`.includes(this.state.search.toLowerCase())
-                )
-                .map(item => (
-                  <div className="list-group-item justify-content-between" key={item.id.value}>
-                    {item.name.first}  {item.name.last}        {item.phone}     {item.email}
-                  </div>
-                )
-                ) : (
-                <h3>No Results to Display</h3>
-              )}
-          </Card>
-        </Col>
-        <Col size="md-4">
-          <Card heading="Search">
-            <SearchForm
-              value={this.state.search}
-              handleInputChange={this.handleInputChange}
-            />
-          </Card>
-        </Col>
-      </Row>
-    </Container>
-  );
-}
+                      )
+                      ) : (
+                      <h3>No Results to Display</h3>
+                    )}
+                </tbody>
+              </table>
+            </Card>
+          </Col>
+          <Col size="md-4">
+            <Card heading="Search">
+              <SearchForm
+                value={this.state.search}
+                handleInputChange={this.handleInputChange}
+                sortEmployees={this.sortEmployees}
+
+              />
+            </Card>
+          </Col>
+        </Row>
+      </Container>
+    );
+  }
 }
 
 export default OmdbContainer;

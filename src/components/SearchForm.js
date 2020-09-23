@@ -18,7 +18,8 @@ function SearchForm(props) {
         <br />
         
       </div>
-      <button type="button" class="btn btn-light sort">Sort/Organize</button>
+      <button type="button" className="btn btn-light sort"  onClick={props.sortEmployees}>Sort/Organize</button>
+     
     </form>
   );
 }
