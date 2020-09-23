@@ -4,6 +4,8 @@
 
 Users are able to view their entire employee directory at once so that They have quick access to their information.
 
+![Homepage](/assets/homepage.png)
+
 This project was made taking in consideration the requirements from Columbia Coding Boot Camp:
 
 ```
